@@ -15,13 +15,14 @@ import android.support.v4.app.FragmentTransaction;
 import com.maomao.tql.audio.R;
 import com.maomao.tql.audio.fragment.MusicFragment;
 import com.maomao.tql.audio.fragment.MusicListFragment;
+import com.maomao.tql.audio.fragment.MusicNetFragment;
 import com.maomao.tql.audio.fragment.SettingsFragment;
 
 public class MainActivity extends FragmentActivity implements OnClickListener {
 
-    private LinearLayout mTabMusicPlay,mTabMusicList,mTabSettings;
-    private ImageButton mMusicPlayerImg,mMusicListImg,mSettingsImg;
-    private Fragment mFragMusic,mFragMusicList,mFragSettings;
+    //private LinearLayout mTabMusicPlay,mTabMusicList,mTabSettings,mTabMusicNet,mTabMusicSearch;
+    private ImageButton mMusicPlayerImg,mMusicListImg,mSettingsImg,mMusicNetImg,mMusicSearchImg;
+    private Fragment mFragMusic,mFragMusicList,mFragSettings,mFragMusicNet,mFragMusicSearch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,25 +36,22 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
     }
 
     private void initViews(){
-
-        mTabMusicPlay = (LinearLayout)findViewById(R.id.id_tab_music_play);
-        mTabMusicList = (LinearLayout)findViewById(R.id.id_tab_music_list);
-        mTabSettings = (LinearLayout)findViewById(R.id.id_tab_settings);
-
         mMusicPlayerImg = (ImageButton) findViewById(R.id.id_tab_music_player_img);
         mMusicListImg = (ImageButton) findViewById(R.id.id_tab_music_list_img);
+        mMusicNetImg = (ImageButton) findViewById(R.id.id_tab_music_net_img);
+        mMusicSearchImg = (ImageButton) findViewById(R.id.id_tab_music_search_img);
         mSettingsImg = (ImageButton) findViewById(R.id.id_tab_settings_img);
     }
 
     private void initEvents(){
-        mTabMusicPlay.setOnClickListener(this);
-        mTabMusicList.setOnClickListener(this);
-        mTabSettings.setOnClickListener(this);
+
     }
 
     private void resetImgs(){
         mMusicPlayerImg.setImageResource(R.mipmap.tab_music_normal);
         mMusicListImg.setImageResource(R.mipmap.tab_musiclist_normal);
+        mMusicNetImg.setImageResource(R.mipmap.tab_music_net);
+        mMusicSearchImg.setImageResource(R.mipmap.tab_music_search);
         mSettingsImg.setImageResource(R.mipmap.tab_settings_normal);
     }
 
@@ -61,14 +59,20 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
     public void onClick(View v){
         resetImgs();
         switch (v.getId()){
-            case R.id.id_tab_music_play:
+            case R.id.id_tab_music_player_img:
                 selectTab(0);
                 break;
-            case R.id.id_tab_music_list:
+            case R.id.id_tab_music_list_img:
                 selectTab(1);
                 break;
-            case R.id.id_tab_settings:
+            case R.id.id_tab_music_net_img:
                 selectTab(2);
+                break;
+            case R.id.id_tab_music_search_img:
+                selectTab(3);
+                break;
+            case R.id.id_tab_settings_img:
+                selectTab(4);
                 break;
              default:
                     break;
@@ -100,7 +104,29 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
                 }
                 break;
 
+
             case 2:
+                mMusicNetImg.setImageResource(R.mipmap.tab_music_net);
+                if (mFragMusicNet == null){
+                    mFragMusicNet = new MusicNetFragment();
+                    transaction.add(R.id.id_content,mFragMusicNet);
+                }else{
+                    transaction.show(mFragMusicNet);
+                }
+                break;
+
+            case 3:
+                mMusicSearchImg.setImageResource(R.mipmap.tab_music_search);
+                if (mFragMusicSearch == null){
+                    mFragMusicSearch = new MusicNetFragment();
+                    transaction.add(R.id.id_content,mFragMusicSearch);
+                }else{
+                    transaction.show(mFragMusicSearch);
+                }
+                break;
+
+
+            case 4:
                 mSettingsImg.setImageResource(R.mipmap.tab_settings_pressed);
                 if (mFragSettings == null){
                     mFragSettings = new SettingsFragment();
