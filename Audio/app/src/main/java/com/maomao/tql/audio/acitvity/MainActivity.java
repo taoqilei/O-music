@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.view.View.OnClickListener;
 
 import android.support.v4.app.Fragment;
@@ -14,8 +13,8 @@ import android.support.v4.app.FragmentTransaction;
 
 import com.maomao.tql.audio.R;
 import com.maomao.tql.audio.fragment.MusicFragment;
-import com.maomao.tql.audio.fragment.MusicListFragment;
-import com.maomao.tql.audio.fragment.MusicNetFragment;
+import com.maomao.tql.audio.ListFragment.MusicListFragment;
+import com.maomao.tql.audio.NetFragment.MusicNetFragment;
 import com.maomao.tql.audio.fragment.SettingsFragment;
 
 public class MainActivity extends FragmentActivity implements OnClickListener {
@@ -44,7 +43,11 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
     }
 
     private void initEvents(){
-
+        mMusicPlayerImg.setOnClickListener(this);
+        mMusicListImg.setOnClickListener(this);
+        mMusicNetImg.setOnClickListener(this);
+        mMusicSearchImg.setOnClickListener(this);
+        mSettingsImg.setOnClickListener(this);
     }
 
     private void resetImgs(){

@@ -1,4 +1,4 @@
-package com.maomao.tql.audio.fragment;
+package com.maomao.tql.audio.SearchFragment;
 
 import android.support.v4.app.Fragment;
 

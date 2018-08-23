@@ -1,4 +1,4 @@
-package com.maomao.tql.audio.fragment;
+package com.maomao.tql.audio.ListFragment;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -26,6 +26,7 @@ import java.io.File;
 import com.maomao.tql.audio.R;
 import com.maomao.tql.audio.acitvity.MainActivity;
 //import com.maomao.tql.audio.adapter.MusicListAdapter;
+import com.maomao.tql.audio.fragment.BaseFragment;
 import com.maomao.tql.audio.pojo.Music;
 import com.maomao.tql.audio.utils.L;
 import com.maomao.tql.audio.utils.MusicUtils;
