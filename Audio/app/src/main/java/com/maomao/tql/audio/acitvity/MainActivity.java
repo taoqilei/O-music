@@ -12,6 +12,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
 import com.maomao.tql.audio.R;
+import com.maomao.tql.audio.SearchFragment.MusicSearchFragment;
 import com.maomao.tql.audio.fragment.MusicFragment;
 import com.maomao.tql.audio.ListFragment.MusicListFragment;
 import com.maomao.tql.audio.NetFragment.MusicNetFragment;
@@ -121,7 +122,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
             case 3:
                 mMusicSearchImg.setImageResource(R.mipmap.tab_music_search);
                 if (mFragMusicSearch == null){
-                    mFragMusicSearch = new MusicNetFragment();
+                    mFragMusicSearch = new MusicSearchFragment();
                     transaction.add(R.id.id_content,mFragMusicSearch);
                 }else{
                     transaction.show(mFragMusicSearch);
