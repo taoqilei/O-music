@@ -11,27 +11,24 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
-
 import com.maomao.tql.audio.Adapter.SongSearchListViewAdapter;
 import com.maomao.tql.audio.Bean.SongBySearchBean;
 import com.maomao.tql.audio.InterAPItool.GetListBySearchSong;
 import com.maomao.tql.audio.R;
 import com.maomao.tql.audio.application.App;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class MusicSearchFragment extends Fragment {
 
     private List<SongBySearchBean> searchSongList=new ArrayList<>();
-    private EditText searchInfo;
-    private ImageButton searchBtn;
-    private ListView songBySearch;
-    private SongSearchListViewAdapter myAdapter;
-    private String searchstr=null;
+    private EditText mETsearchInfo;
+    private ImageButton mIBsearchBtn;
+    private ListView mLVsongBySearch;
+    private SongSearchListViewAdapter songSearchListViewAdapter;
+    private String mStrSearch=null;
     private GetListBySearchSong getListBySearchSong;
-    private List<String> songidlist=new ArrayList<>();
-
+    private List<String> mListSongid=new ArrayList<>();
 
     @Nullable
     @Override
@@ -39,20 +36,20 @@ public class MusicSearchFragment extends Fragment {
         View view = inflater.inflate(R.layout.song_search, container, false);
         setView(view);
 
-        myAdapter = new SongSearchListViewAdapter(App.sContext, searchSongList, new SongSearchListViewAdapter.Callback() {
+        songSearchListViewAdapter = new SongSearchListViewAdapter(App.sContext, searchSongList, new SongSearchListViewAdapter.Callback() {
             @Override
             public void downloadsongcallback(String songid) {
                 //dialog(songid);
             }
         });
-        searchBtn.setOnClickListener(new View.OnClickListener() {
+        mIBsearchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                String string=searchInfo.getText().toString();
-//                searchstr= URLDecoder.decode(string ,"UTF-8");
-                searchstr=searchInfo.getText().toString();
-                if (!(searchstr ==null)){
-                    recieveList(searchstr);
+//                String string=mETsearchInfo.getText().toString();
+//                mStrSearch= URLDecoder.decode(string ,"UTF-8");
+                mStrSearch=mETsearchInfo.getText().toString();
+                if (!(mStrSearch ==null)){
+                    recieveList(mStrSearch);
 
                 }
             }
@@ -62,29 +59,29 @@ public class MusicSearchFragment extends Fragment {
 
     //设置view
     private void setView(View view){
-        searchInfo= (EditText) view.findViewById(R.id.searchText);
-        searchBtn= (ImageButton) view.findViewById(R.id.searchbtn);
-        songBySearch= (ListView) view.findViewById(R.id.songbysearch);
+        mETsearchInfo= (EditText) view.findViewById(R.id.searchText);
+        mIBsearchBtn= (ImageButton) view.findViewById(R.id.searchbtn);
+        mLVsongBySearch= (ListView) view.findViewById(R.id.songbysearch);
 
-        songBySearch.setAdapter(myAdapter);
+        mLVsongBySearch.setAdapter(songSearchListViewAdapter);
     }
 
     //获得歌曲列表
-    private void recieveList(String searchstr){
+    private void recieveList(String strSearch){
 //        final List<SongBySearchBean> list=new ArrayList<>();
-        getListBySearchSong =new GetListBySearchSong(searchstr, new GetListBySearchSong.Callback() {
+        getListBySearchSong =new GetListBySearchSong(strSearch, new GetListBySearchSong.Callback() {
             @Override
             public void getList() {
                 searchSongList.clear();
                 searchSongList.addAll(getListBySearchSong.songbysearchlist);
                 Log.e("listmain", String.valueOf(searchSongList.size()));
                 int i;
-                songidlist.clear();
+                mListSongid.clear();
                 for (i=0;i<searchSongList.size();i++){
 
-                    songidlist.add(searchSongList.get(i).getSongid());
+                    mListSongid.add(searchSongList.get(i).getSongid());
                 }
-                //myApplication.setSongidList(songidlist);
+                //myApplication.setSongidList(mListSongid);
                 refreshListView();
             }
 
@@ -104,12 +101,12 @@ public class MusicSearchFragment extends Fragment {
             musicPlayerService.pesition=-1;
         }
 
-        songBySearch.setAdapter(myAdapter);
-        songBySearch.setItemsCanFocus(false);
+        mLVsongBySearch.setAdapter(songSearchListViewAdapter);
+        mLVsongBySearch.setItemsCanFocus(false);
         listener= resetLickListener();
-        songBySearch.setOnItemClickListener(listener);
+        mLVsongBySearch.setOnItemClickListener(listener);
 */
-        songBySearch.setAdapter(myAdapter);
-        myAdapter.notifyDataSetChanged();
+        mLVsongBySearch.setAdapter(songSearchListViewAdapter);
+        songSearchListViewAdapter.notifyDataSetChanged();
     }
 }
