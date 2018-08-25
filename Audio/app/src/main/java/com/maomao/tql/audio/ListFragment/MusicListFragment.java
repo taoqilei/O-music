@@ -9,8 +9,13 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.DialogTitle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,6 +27,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.maomao.tql.audio.R;
 import com.maomao.tql.audio.acitvity.MainActivity;
@@ -34,10 +41,9 @@ import com.maomao.tql.audio.utils.MusicUtils;
 
 public class MusicListFragment extends BaseFragment implements View.OnClickListener{
 
-    private ListView mMusicListView;
-    private ImageView mMusicIcon;
-    private TextView mMusicTitle;
-    private TextView mMusicArtist;
+    private ViewPager viewPager;
+    private int page = 0;
+    private String[] title;
 
     //private MusicListAdapter mMusicListAdapter = new MusicListAdapter();
     private MainActivity mActivity;
@@ -52,19 +58,42 @@ public class MusicListFragment extends BaseFragment implements View.OnClickListe
     }
 
     @Override
-    public void onAttach(Activity activity){
-        super.onAttach(activity);
-        mActivity = (MainActivity) activity;
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        viewPager.setCurrentItem(page);
     }
+
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View layout = inflater.inflate(R.layout.music_list, container, false);
-        setupViews(layout);
-        return layout;
+
+        View rootView = inflater.inflate(
+                R.layout.fragment_tab, container, false);
+        viewPager = (ViewPager) rootView.findViewById(R.id.viewpager);
+        if (viewPager != null) {
+            setupViewPager(viewPager);
+            viewPager.setOffscreenPageLimit(3);
+        }
+
+        final TabLayout tabLayout = (TabLayout) rootView.findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(viewPager);
+        //tabLayout.setTabTextColors(R.color.text_color, ThemeUtils.getThemeColorStateList(mContext, R.color.theme_color_primary).getDefaultColor());
+        //tabLayout.setSelectedTabIndicatorColor(ThemeUtils.getThemeColorStateList(mContext, R.color.theme_color_primary).getDefaultColor());
+
+        return rootView;
     }
 
+
+    private void setupViewPager(ViewPager viewPager) {
+        Adapter adapter = new Adapter(getChildFragmentManager());
+        adapter.addFragment(new SongListFragment(), title[0]);
+        adapter.addFragment(new ArtistListFragment(), title[1]);
+        adapter.addFragment(new AlbumListFragment(), title[2]);
+        adapter.addFragment(new FolderListFragment(), title[3]);
+        viewPager.setAdapter(adapter);
+    }
     @Override
     public void onStart(){
         super.onStart();
@@ -91,70 +120,39 @@ public class MusicListFragment extends BaseFragment implements View.OnClickListe
         allowUnbindService();
     }
 
-    private void setupViews(View layout){
-        mMusicListView = (ListView) layout.findViewById(R.id.lv_music_list);
-        mMusicIcon = (ImageView) layout.findViewById(R.id.iv_play_icon);
-        mMusicTitle = (TextView) layout.findViewById(R.id.tv_play_title);
-        mMusicArtist = (TextView) layout.findViewById(R.id.tv_play_artist);
+    static class Adapter extends FragmentStatePagerAdapter {
+        private final List<Fragment> mFragments = new ArrayList<>();
+        private final List<String> mFragmentTitles = new ArrayList<>();
 
-        //mMusicListView.setAdapter(mMusicListAdapter);
-        mMusicListView.setOnItemClickListener(mMusicItemClickListener);
-        //mMusicListView.setOnItemLongClickListener(mItemLongClickListener);
-
-        mMusicIcon.setOnClickListener(this);
-    }
-
-    /*
-    private AdapterView.OnItemLongClickListener mItemLongClickListener = new AdapterView.OnItemLongClickListener() {
-        @Override
-        public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-
-            final  int pos = position;
-            AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-            builder.setTitle("Delete this item");
-            builder.setMessage("sure to delete this item ?");
-            builder.setPositiveButton("delete", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    Music music = MusicUtils.sMusicList.remove(pos);
-                    mMusicListAdapter.notifyDataSetChanged();
-                    if (new File(music.getUri()).delete()){
-                        scanSDCard();
-                    }
-                }
-            });
-            builder.setNegativeButton("cancle", null);
-            builder.create().show();
-            return true;
+        public Adapter(FragmentManager fm) {
+            super(fm);
         }
-    };
 
-    */
-
-    private AdapterView.OnItemClickListener mMusicItemClickListener = new AdapterView.OnItemClickListener() {
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            //play(position);
-            //----------------------------------------------------------------------------------------------------------------------
+        public void addFragment(Fragment fragment, String title) {
+            mFragments.add(fragment);
+            mFragmentTitles.add(title);
         }
-    };
 
-    /**
-     * 发送广播，通知系统扫描指定的文件
-     *
-     */
-    private void scanSDCard() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            // 判断SDK版本是不是4.4或者高于4.4
-            String[] paths = new String[]{
-                    Environment.getExternalStorageDirectory().toString()};
-            MediaScannerConnection.scanFile(mActivity, paths, null, null);
-        } else {
-            Intent intent = new Intent(Intent.ACTION_MEDIA_MOUNTED);
-            intent.setClassName("com.android.providers.media",
-                    "com.android.providers.media.MediaScannerReceiver");
-            intent.setData(Uri.parse("file://"+ MusicUtils.getMusicDir()));
-            mActivity.sendBroadcast(intent);
+        @Override
+        public Fragment getItem(int position) {
+            if(mFragments.size() > position)
+                return mFragments.get(position);
+
+            return null;
+        }
+        @Override
+        public int getCount() {
+            return mFragments.size();
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return mFragmentTitles.get(position);
+        }
+
+        @Override
+        public void restoreState(Parcelable state, ClassLoader loader) {
+            // don't super !
         }
     }
 
